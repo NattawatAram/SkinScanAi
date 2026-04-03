@@ -880,6 +880,20 @@ function ResultCard({
 
 // ── Main Page ────────────────────────────────────────────────────────────────
 export default function Home() {
+  const heroImages = [
+    { src: "/Capture-3.webp", alt: "EX" },
+    { src: "/C0155939.original.width-320.jpg", alt: "EX" },
+    { src: "/010ce533-5df6-441b-9d1d-3ef2a21aeadc.webp", alt: "EX" },
+  ];
+  const [heroSlide, setHeroSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [heroImages.length]);
+
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -1255,25 +1269,112 @@ export default function Home() {
                     opacity: 0.15,
                     userSelect: "none",
                     position: "absolute",
+                    zIndex: 0,
                   }}
                 >
                   ⚕
                 </div>
-                <img
-                  src="/docteam.png"
-                  alt="Medical team"
+                {heroImages.map((img, i) => (
+                  <img
+                    key={i}
+                    src={img.src}
+                    alt={img.alt}
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "top center",
+                      opacity: heroSlide === i ? 1 : 0,
+                      transition: "opacity 0.6s ease",
+                      zIndex: 1,
+                    }}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                ))}
+                {/* Slide dots */}
+                <div
                   style={{
-                    width: "110%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "top center",
-                    position: "relative",
-                    zIndex: 1,
+                    position: "absolute",
+                    bottom: 12,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    display: "flex",
+                    gap: "0.4rem",
+                    zIndex: 3,
                   }}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
+                >
+                  {heroImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setHeroSlide(i)}
+                      style={{
+                        width: heroSlide === i ? 20 : 8,
+                        height: 8,
+                        borderRadius: 99,
+                        border: "none",
+                        background: heroSlide === i ? "white" : "rgba(255,255,255,0.5)",
+                        cursor: "pointer",
+                        transition: "all 0.3s ease",
+                        padding: 0,
+                      }}
+                    />
+                  ))}
+                </div>
+                {/* Nav arrows */}
+                <button
+                  onClick={() => setHeroSlide((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
+                  style={{
+                    position: "absolute",
+                    left: 8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    zIndex: 3,
+                    width: 30,
+                    height: 30,
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "rgba(255,255,255,0.7)",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.8rem",
+                    color: "#1e40af",
+                    fontWeight: 700,
                   }}
-                />
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={() => setHeroSlide((prev) => (prev + 1) % heroImages.length)}
+                  style={{
+                    position: "absolute",
+                    right: 8,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    zIndex: 3,
+                    width: 30,
+                    height: 30,
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "rgba(255,255,255,0.7)",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.8rem",
+                    color: "#1e40af",
+                    fontWeight: 700,
+                  }}
+                >
+                  ›
+                </button>
               </div>
               <div
                 style={{
@@ -1436,7 +1537,7 @@ export default function Home() {
               }}
             >
               อัปโหลดภาพที่ชัดเจน แล้ว AI ของเราจะวิเคราะห์และจัดประเภทให้ทันที
-              ครอบคลุม 6 โรคผิวหนัง
+              ครอบคลุม 10 โรคผิวหนัง
             </p>
           </div>
 
